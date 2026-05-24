@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🔢 Redondeadores</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --p1: #FF6B6B; --p2: #4ECDC4; --p3: #FFE66D; --p4: #A8E6CF;
+    --bg: #1a1a2e; --bg2: #16213e; --bg3: #0f3460;
+    --card: rgba(255,255,255,0.07);
+    --purple: #7B2FBE; --purple2: #9B59B6;
+    --gold: #f9ca24; --white: #ffffff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--white);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* Stars background */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.6) 0%, transparent 100%),
+      radial-gradient(1px 1px at 60% 10%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 80% 50%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 40% 70%, rgba(255,255,255,0.6) 0%, transparent 100%),
+      radial-gradient(1px 1px at 10% 80%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 90% 20%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 55% 85%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 30% 50%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 70% 65%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 15% 45%, rgba(255,255,255,0.5) 0%, transparent 100%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Floating orbs */
+  .orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.15;
+    pointer-events: none;
+    z-index: 0;
+    animation: floatOrb 8s ease-in-out infinite;
+  }
+  .orb1 { width: 300px; height: 300px; background: #7B2FBE; top: -100px; left: -100px; animation-delay: 0s; }
+  .orb2 { width: 250px; height: 250px; background: #FF6B6B; bottom: -80px; right: -80px; animation-delay: 3s; }
+  .orb3 { width: 200px; height: 200px; background: #4ECDC4; top: 40%; left: 60%; animation-delay: 5s; }
+  @keyframes floatOrb {
+    0%, 100% { transform: translate(0,0) scale(1); }
+    50% { transform: translate(30px, 30px) scale(1.1); }
+  }
+
+  #app {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+  }
+
+  /* TOP BAR */
+  .topbar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
+    z-index: 100;
+    background: rgba(26,26,46,0.85);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .topbar button {
+    border: none; cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    border-radius: 20px;
+    padding: 8px 18px;
+    transition: all 0.2s;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .btn-musica {
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.2) !important;
+  }
+  .btn-musica:hover { background: rgba(255,255,255,0.2); }
+  .btn-fin {
+    background: rgba(255,107,107,0.25);
+    color: #FF6B6B;
+    border: 1px solid rgba(255,107,107,0.4) !important;
+  }
+  .btn-fin:hover { background: rgba(255,107,107,0.4); }
+
+  /* PANTALLAS */
+  .pantalla {
+    width: 100%;
+    max-width: 560px;
+    text-align: center;
+    animation: aparecer 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  @keyframes aparecer {
+    from { opacity: 0; transform: translateY(30px) scale(0.95); }
+    to   { opacity: 1; transform: translateY(0)   scale(1); }
+  }
+
+  /* LOGO */
+  .logo {
+    font-family: 'Fredoka One', cursive;
+    font-size: 52px;
+    background: linear-gradient(135deg, #FFE66D, #FF6B6B, #4ECDC4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 6px;
+    text-shadow: none;
+    line-height: 1.1;
+  }
+  .logo-sub {
+    font-size: 16px;
+    color: rgba(255,255,255,0.55);
+    margin-bottom: 2.5rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* JUGADORES */
+  .jug-label {
+    font-size: 18px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.8);
+    margin-bottom: 1.2rem;
+  }
+  .jugador-grid {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    margin-bottom: 2.5rem;
+  }
+  .jbtn {
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    border: 3px solid rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.07);
+    font-size: 28px;
+    font-family: 'Fredoka One', cursive;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column;
+    gap: 0;
+  }
+  .jbtn:hover { transform: scale(1.12); border-color: rgba(255,255,255,0.5); }
+  .jbtn.sel1 { border-color: var(--p1); background: rgba(255,107,107,0.25); transform: scale(1.15); box-shadow: 0 0 24px rgba(255,107,107,0.4); }
+  .jbtn.sel2 { border-color: var(--p2); background: rgba(78,205,196,0.25); transform: scale(1.15); box-shadow: 0 0 24px rgba(78,205,196,0.4); }
+  .jbtn.sel3 { border-color: var(--p3); background: rgba(255,230,109,0.25); transform: scale(1.15); box-shadow: 0 0 24px rgba(255,230,109,0.4); }
+  .jbtn.sel4 { border-color: var(--p4); background: rgba(168,230,207,0.25); transform: scale(1.15); box-shadow: 0 0 24px rgba(168,230,207,0.4); }
+  .jbtn-emoji { font-size: 24px; line-height: 1; }
+  .jbtn-num { font-size: 14px; font-weight: 700; opacity: 0.7; font-family: 'Nunito', sans-serif; }
+
+  .btn-start {
+    font-family: 'Fredoka One', cursive;
+    font-size: 22px;
+    padding: 16px 48px;
+    border: none;
+    border-radius: 50px;
+    background: linear-gradient(135deg, #7B2FBE, #4ECDC4);
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.25s;
+    box-shadow: 0 8px 32px rgba(123,47,190,0.4);
+    letter-spacing: 1px;
+  }
+  .btn-start:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 14px 40px rgba(123,47,190,0.5); }
+  .btn-start:disabled { opacity: 0.3; cursor: not-allowed; transform: none; box-shadow: none; }
+
+  /* TURNO */
+  .turno-card {
+    background: var(--card);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 1.5rem 2rem;
+    margin-bottom: 1.5rem;
+    backdrop-filter: blur(10px);
+  }
+  .turno-jugador-nombre {
+    font-family: 'Fredoka One', cursive;
+    font-size: 26px;
+    margin-bottom: 4px;
+  }
+  .turno-meta { font-size: 13px; color: rgba(255,255,255,0.5); font-weight: 600; }
+
+  .nivel-pill {
+    display: inline-block;
+    padding: 6px 20px;
+    border-radius: 30px;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 1.2rem;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.85);
+  }
+
+  .numero-display {
+    font-family: 'Fredoka One', cursive;
+    font-size: 80px;
+    line-height: 1;
+    margin: 0.8rem 0 0.5rem;
+    background: linear-gradient(135deg, #FFE66D, #FF6B6B);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: pulso 2s ease-in-out infinite;
+  }
+  @keyframes pulso {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.03); }
+  }
+
+  .pregunta-txt {
+    font-size: 17px;
+    color: rgba(255,255,255,0.65);
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+  }
+
+  .input-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 1rem;
+  }
+  .inp-resp {
+    width: 140px;
+    font-size: 32px;
+    font-family: 'Fredoka One', cursive;
+    text-align: center;
+    background: rgba(255,255,255,0.1);
+    border: 2px solid rgba(255,255,255,0.25);
+    border-radius: 16px;
+    color: #fff;
+    padding: 10px 16px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .inp-resp:focus { border-color: var(--p2); box-shadow: 0 0 20px rgba(78,205,196,0.3); }
+  .inp-resp::placeholder { color: rgba(255,255,255,0.3); font-size: 18px; }
+  .btn-ok {
+    width: 58px; height: 58px;
+    border-radius: 50%;
+    border: none;
+    background: linear-gradient(135deg, #4ECDC4, #7B2FBE);
+    color: #fff;
+    font-size: 26px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 16px rgba(78,205,196,0.4);
+  }
+  .btn-ok:hover { transform: scale(1.12); }
+  .btn-ok:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+  .feedback {
+    font-family: 'Fredoka One', cursive;
+    font-size: 22px;
+    padding: 12px 28px;
+    border-radius: 14px;
+    display: inline-block;
+    animation: popIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    margin-top: 0.5rem;
+  }
+  @keyframes popIn {
+    from { opacity: 0; transform: scale(0.7); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+  .ok-fb { background: rgba(168,230,207,0.2); color: #A8E6CF; border: 1px solid rgba(168,230,207,0.3); }
+  .mal-fb { background: rgba(255,107,107,0.2); color: #FF6B6B; border: 1px solid rgba(255,107,107,0.3); }
+
+  /* PROGRESO */
+  .prog-bar-wrap {
+    margin-top: 1.5rem;
+    display: flex; align-items: center; gap: 10px;
+    justify-content: center;
+  }
+  .prog-bar-bg {
+    flex: 1; max-width: 300px;
+    height: 8px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .prog-bar-fill {
+    height: 100%;
+    border-radius: 10px;
+    background: linear-gradient(90deg, #7B2FBE, #4ECDC4);
+    transition: width 0.5s ease;
+  }
+  .prog-txt { font-size: 13px; color: rgba(255,255,255,0.45); font-weight: 700; white-space: nowrap; }
+
+  /* MARCADOR LATERAL */
+  .marcador-lateral {
+    position: fixed;
+    left: 16px; top: 50%;
+    transform: translateY(-50%);
+    display: flex; flex-direction: column; gap: 10px;
+    z-index: 50;
+  }
+  .marc-item {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 14px;
+    padding: 8px 12px;
+    text-align: center;
+    min-width: 60px;
+    backdrop-filter: blur(6px);
+    transition: all 0.3s;
+  }
+  .marc-item.activo { border-color: rgba(255,255,255,0.35); background: rgba(255,255,255,0.14); transform: scale(1.08); }
+  .marc-emoji { font-size: 20px; line-height: 1; }
+  .marc-nombre { font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.5); margin-top: 2px; }
+  .marc-puntos { font-family: 'Fredoka One', cursive; font-size: 20px; }
+
+  /* FINAL */
+  .final-card {
+    background: var(--card);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 24px;
+    padding: 2rem;
+    backdrop-filter: blur(12px);
+  }
+  .final-titulo {
+    font-family: 'Fredoka One', cursive;
+    font-size: 40px;
+    background: linear-gradient(135deg, #FFE66D, #FF6B6B, #4ECDC4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.5rem;
+  }
+  .podio {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 12px;
+    margin: 1.5rem 0;
+  }
+  .podio-item {
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    transition: all 0.3s;
+  }
+  .podio-emoji { font-size: 30px; }
+  .podio-nombre { font-size: 13px; font-weight: 800; color: rgba(255,255,255,0.75); }
+  .podio-pts { font-family: 'Fredoka One', cursive; font-size: 18px; }
+  .podio-barra {
+    width: 48px;
+    border-radius: 8px 8px 0 0;
+    background: linear-gradient(180deg, rgba(255,255,255,0.3), rgba(255,255,255,0.1));
+    border: 1px solid rgba(255,255,255,0.2);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Fredoka One', cursive;
+    font-size: 18px;
+    color: rgba(255,255,255,0.6);
+  }
+  .podio-item.primero .podio-barra { background: linear-gradient(180deg, rgba(249,202,36,0.5), rgba(249,202,36,0.15)); border-color: rgba(249,202,36,0.5); }
+  .podio-item.primero .podio-emoji { font-size: 38px; }
+
+  .btn-restart {
+    font-family: 'Fredoka One', cursive;
+    font-size: 20px;
+    padding: 14px 44px;
+    border: none;
+    border-radius: 50px;
+    background: linear-gradient(135deg, #FF6B6B, #7B2FBE);
+    color: #fff;
+    cursor: pointer;
+    margin-top: 1.5rem;
+    transition: all 0.25s;
+    box-shadow: 0 8px 28px rgba(255,107,107,0.35);
+  }
+  .btn-restart:hover { transform: translateY(-3px) scale(1.05); }
+
+  /* NOTAS MUSICALES FLOTANTES */
+  .nota {
+    position: fixed;
+    font-size: 22px;
+    animation: subirNota 3s ease-out forwards;
+    pointer-events: none;
+    z-index: 200;
+    opacity: 0.8;
+  }
+  @keyframes subirNota {
+    0%   { opacity: 0.8; transform: translateY(0) rotate(0deg) scale(1); }
+    100% { opacity: 0;   transform: translateY(-180px) rotate(20deg) scale(0.5); }
+  }
+
+  /* CONFETI */
+  .confeti {
+    position: fixed;
+    width: 10px; height: 10px;
+    border-radius: 2px;
+    animation: caerConfeti 2.5s ease-in forwards;
+    pointer-events: none;
+    z-index: 200;
+  }
+  @keyframes caerConfeti {
+    0%   { transform: translateY(-20px) rotate(0); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+  }
+</style>
+</head>
+<body>
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<div class="orb orb3"></div>
+
+<div class="topbar" id="topbar" style="display:none">
+  <button class="btn-musica" id="btnMusica" onclick="toggleMusica()">🎵 Música: ON</button>
+  <button class="btn-fin" onclick="finalizarPartida()">🏁 Finalizar</button>
+</div>
+
+<div class="marcador-lateral" id="marcador" style="display:none"></div>
+<div id="app"><div id="pantalla"></div></div>
+
+<script>
+const EMOJIS   = ['🐶','🐱','🦊','🐸'];
+const COLORES  = ['#FF6B6B','#4ECDC4','#FFE66D','#A8E6CF'];
+const NOMBRES  = ['Jugador 1','Jugador 2','Jugador 3','Jugador 4'];
+
+let numJugadores = 0, puntos = [], turnos = [], turnoIdx = 0;
+let audioCtx = null, musicaOn = true, oscNodes = [], gainMaster = null;
+let gainNodos = [];
+
+// ————— MÚSICA —————
+function initAudio() {
+  if (audioCtx) return;
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  gainMaster = audioCtx.createGain();
+  gainMaster.gain.value = 0.18;
+  gainMaster.connect(audioCtx.destination);
+  tocarMusica();
+}
+
+function tocarMusica() {
+  if (!audioCtx || !musicaOn) return;
+  detenerMusica();
+  // Melodía infantil alegre (escala pentatónica)
+  const notas = [261.63, 293.66, 329.63, 392.00, 440.00, 392.00, 349.23, 329.63, 293.66, 261.63];
+  const tiempos = [0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.6];
+  let t = audioCtx.currentTime;
+  const loop = () => {
+    if (!musicaOn) return;
+    let dur = 0;
+    notas.forEach((freq, i) => {
+      const osc = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      g.gain.setValueAtTime(0, t + dur);
+      g.gain.linearRampToValueAtTime(0.5, t + dur + 0.02);
+      g.gain.linearRampToValueAtTime(0, t + dur + tiempos[i] - 0.05);
+      osc.connect(g); g.connect(gainMaster);
+      osc.start(t + dur);
+      osc.stop(t + dur + tiempos[i]);
+      dur += tiempos[i];
+    });
+    // Bajo armónico
+    const bajoFreqs = [130.81, 130.81, 164.81, 164.81, 130.81, 130.81, 174.61, 130.81];
+    const bajoDurs  = [0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4];
+    let tb = 0;
+    bajoFreqs.forEach((freq, i) => {
+      const osc2 = audioCtx.createOscillator();
+      const g2 = audioCtx.createGain();
+      osc2.type = 'triangle';
+      osc2.frequency.value = freq;
+      g2.gain.setValueAtTime(0, t + tb);
+      g2.gain.linearRampToValueAtTime(0.25, t + tb + 0.03);
+      g2.gain.linearRampToValueAtTime(0, t + tb + bajoDurs[i] - 0.08);
+      osc2.connect(g2); g2.connect(gainMaster);
+      osc2.start(t + tb);
+      osc2.stop(t + tb + bajoDurs[i]);
+      tb += bajoDurs[i];
+    });
+    const totalDur = dur;
+    setTimeout(loop, totalDur * 1000 - 100);
+  };
+  loop();
+}
+
+function detenerMusica() {
+  // Se gestiona via timeout en loop
+}
+
+function toggleMusica() {
+  musicaOn = !musicaOn;
+  document.getElementById('btnMusica').textContent = musicaOn ? '🎵 Música: ON' : '🔇 Música: OFF';
+  if (musicaOn) { if (audioCtx) { gainMaster.gain.value = 0.18; tocarMusica(); } }
+  else { if (gainMaster) gainMaster.gain.value = 0; }
+}
+
+function sonidoCorrecto() {
+  if (!audioCtx || !musicaOn) return;
+  [523.25, 659.25, 783.99].forEach((f, i) => {
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.frequency.value = f; o.type = 'sine';
+    const t = audioCtx.currentTime + i * 0.12;
+    g.gain.setValueAtTime(0.4, t);
+    g.gain.linearRampToValueAtTime(0, t + 0.25);
+    o.connect(g); g.connect(gainMaster);
+    o.start(t); o.stop(t + 0.3);
+  });
+}
+
+function sonidoError() {
+  if (!audioCtx || !musicaOn) return;
+  [220, 196].forEach((f, i) => {
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.frequency.value = f; o.type = 'sawtooth';
+    const t = audioCtx.currentTime + i * 0.15;
+    g.gain.setValueAtTime(0.2, t);
+    g.gain.linearRampToValueAtTime(0, t + 0.2);
+    o.connect(g); g.connect(gainMaster);
+    o.start(t); o.stop(t + 0.25);
+  });
+}
+
+function sonidoFanfare() {
+  if (!audioCtx || !musicaOn) return;
+  const seq = [523.25, 659.25, 783.99, 1046.50, 783.99, 1046.50];
+  seq.forEach((f, i) => {
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.frequency.value = f; o.type = 'square';
+    const t = audioCtx.currentTime + i * 0.18;
+    g.gain.setValueAtTime(0.15, t);
+    g.gain.linearRampToValueAtTime(0, t + 0.25);
+    o.connect(g); g.connect(gainMaster);
+    o.start(t); o.stop(t + 0.3);
+  });
+}
+
+// ————— JUEGO —————
+function generarNumero(nivel) {
+  let n = Math.floor(Math.random() * 8) + 1;
+  let decs = Array.from({length: nivel}, () => Math.floor(Math.random() * 9) + 1).join('');
+  return parseFloat(n + '.' + decs);
+}
+
+function aproximar(num, nivel) {
+  let s = num.toFixed(nivel);
+  let [ent, dec] = s.split('.');
+  let digs = dec.split('').map(Number);
+  if (nivel === 1) {
+    return digs[0] >= 5 ? String(parseInt(ent) + 1) : ent;
+  }
+  let carry = digs[nivel-1] >= 5 ? 1 : 0;
+  let res = [];
+  for (let i = nivel-2; i >= 0; i--) {
+    let v = digs[i] + carry; carry = v >= 10 ? 1 : 0; res[i] = v % 10;
+  }
+  let e2 = parseInt(ent) + carry;
+  return e2 + '.' + res.slice(0, nivel-1).join('');
+}
+
+function mostrarInicio() {
+  numJugadores = 0;
+  document.getElementById('topbar').style.display = 'none';
+  document.getElementById('marcador').style.display = 'none';
+  document.getElementById('pantalla').innerHTML = `
+    <div class="pantalla">
+      <div class="logo">🔢 Redondeadores</div>
+      <div class="logo-sub">El juego de los decimales</div>
+      <div class="jug-label">¿Cuántos jugadores?</div>
+      <div class="jugador-grid">
+        ${[1,2,3,4].map(n => `
+          <button class="jbtn" id="jb${n}" onclick="selJug(${n})">
+            <span class="jbtn-emoji">${EMOJIS[n-1]}</span>
+            <span class="jbtn-num">${n}</span>
+          </button>`).join('')}
+      </div>
+      <button class="btn-start" id="btnStart" disabled onclick="iniciar()">🚀 ¡Empezar!</button>
+    </div>`;
+}
+
+function selJug(n) {
+  initAudio();
+  numJugadores = n;
+  [1,2,3,4].forEach(i => {
+    const b = document.getElementById('jb'+i);
+    b.className = 'jbtn' + (i===n ? ' sel'+n : '');
+  });
+  document.getElementById('btnStart').disabled = false;
+  lanzarNotas(3);
+}
+
+function iniciar() {
+  puntos = Array(numJugadores).fill(0);
+  turnos = [];
+  // Nivel 1: 4 rondas×jug, Nivel 2: 3 rondas×jug, Nivel 3: 3 rondas×jug, Nivel 4: 2 rondas×jug
+  [[1,4],[2,3],[3,3],[4,2]].forEach(([niv, rondas]) => {
+    for (let r = 0; r < rondas; r++)
+      for (let j = 0; j < numJugadores; j++)
+        turnos.push({ jugador: j, nivel: niv, num: generarNumero(niv) });
+  });
+  turnoIdx = 0;
+  document.getElementById('topbar').style.display = 'flex';
+  actualizarMarcador(-1);
+  mostrarTurno();
+}
+
+function actualizarMarcador(activo) {
+  const m = document.getElementById('marcador');
+  if (numJugadores === 0) { m.style.display = 'none'; return; }
+  m.style.display = 'flex';
+  m.innerHTML = puntos.slice(0, numJugadores).map((p, i) => `
+    <div class="marc-item ${i===activo?'activo':''}" style="border-color:${i===activo?COLORES[i]:'rgba(255,255,255,0.1)'}">
+      <div class="marc-emoji">${EMOJIS[i]}</div>
+      <div class="marc-nombre">J${i+1}</div>
+      <div class="marc-puntos" style="color:${COLORES[i]}">${p}</div>
+    </div>`).join('');
+}
+
+function mostrarTurno() {
+  if (turnoIdx >= turnos.length) { mostrarFinal(); return; }
+  const t = turnos[turnoIdx];
+  const desc = ['','Al entero','A 1 decimal','A 2 decimales','A 3 decimales'][t.nivel];
+  const correc = aproximar(t.num, t.nivel);
+  const pct = Math.round(turnoIdx / turnos.length * 100);
+  actualizarMarcador(t.jugador);
+  document.getElementById('pantalla').innerHTML = `
+    <div class="pantalla">
+      <div class="turno-card" style="border-color:${COLORES[t.jugador]}33; box-shadow: 0 0 30px ${COLORES[t.jugador]}22">
+        <div class="turno-jugador-nombre" style="color:${COLORES[t.jugador]}">${EMOJIS[t.jugador]} ${NOMBRES[t.jugador]}</div>
+        <div class="turno-meta">Turno ${turnoIdx+1} de ${turnos.length}</div>
+      </div>
+      <div><span class="nivel-pill">⭐ Nivel ${t.nivel} — ${desc}</span></div>
+      <div class="numero-display">${t.num.toFixed(t.nivel)}</div>
+      <div class="pregunta-txt">Redondea este número ↑</div>
+      <div class="input-row">
+        <input class="inp-resp" id="resp" type="text" placeholder="?" autocomplete="off"
+          onkeydown="if(event.key==='Enter') comprobar('${correc}')">
+        <button class="btn-ok" id="btnOk" onclick="comprobar('${correc}')">✓</button>
+      </div>
+      <div id="fb"></div>
+      <div class="prog-bar-wrap">
+        <span class="prog-txt">0%</span>
+        <div class="prog-bar-bg"><div class="prog-bar-fill" style="width:${pct}%"></div></div>
+        <span class="prog-txt">100%</span>
+      </div>
+    </div>`;
+  setTimeout(() => { const el = document.getElementById('resp'); if(el) el.focus(); }, 80);
+}
+
+function comprobar(correc) {
+  const inp = document.getElementById('resp');
+  const val = inp.value.trim().replace(',','.');
+  if (!val) return;
+  const ok = val === String(correc);
+  const fb = document.getElementById('fb');
+  if (ok) {
+    puntos[turnos[turnoIdx].jugador]++;
+    fb.innerHTML = `<div class="feedback ok-fb">🎉 ¡Correcto! = ${correc}</div>`;
+    sonidoCorrecto();
+    lanzarNotas(5);
+    actualizarMarcador(turnos[turnoIdx].jugador);
+  } else {
+    fb.innerHTML = `<div class="feedback mal-fb">❌ Era ${correc} — ¡ánimo!</div>`;
+    sonidoError();
+  }
+  inp.disabled = true;
+  document.getElementById('btnOk').disabled = true;
+  setTimeout(() => { turnoIdx++; mostrarTurno(); }, 1700);
+}
+
+function finalizarPartida() { mostrarFinal(true); }
+
+function mostrarFinal(anticipado) {
+  document.getElementById('topbar').style.display = 'none';
+  document.getElementById('marcador').style.display = 'none';
+  sonidoFanfare();
+  lanzarConfeti();
+  const sorted = puntos.slice(0, numJugadores)
+    .map((p,i)=>({i,p}))
+    .sort((a,b)=>b.p-a.p);
+  const maxP = sorted[0].p;
+  const alturasOrd = [100, 70, 55, 45];
+  const pCls = ['primero','segundo','tercero','cuarto'];
+  const medallasTxt = ['🥇','🥈','🥉','4️⃣'];
+  const titulo = sorted.filter(x=>x.p===maxP).length > 1 ? '¡Empate! 🤝' : `¡Gana ${NOMBRES[sorted[0].i]}! 🎉`;
+  document.getElementById('pantalla').innerHTML = `
+    <div class="pantalla">
+      <div class="final-card">
+        <div class="final-titulo">${titulo}</div>
+        <div style="font-size:15px;color:rgba(255,255,255,0.5);margin-bottom:0.5rem;">${anticipado?'Partida finalizada antes de tiempo':'¡Completasteis todas las rondas!'}</div>
+        <div class="podio">
+          ${sorted.map((x, rank) => `
+            <div class="podio-item ${pCls[rank]}">
+              <div class="podio-emoji">${EMOJIS[x.i]}</div>
+              <div class="podio-nombre">${NOMBRES[x.i]}</div>
+              <div class="podio-pts" style="color:${COLORES[x.i]}">${x.p} pts</div>
+              <div class="podio-barra" style="height:${alturasOrd[rank]}px">${medallasTxt[rank]}</div>
+            </div>`).join('')}
+        </div>
+        <button class="btn-restart" onclick="mostrarInicio()">🔄 Jugar otra vez</button>
+      </div>
+    </div>`;
+}
+
+// ————— FX —————
+function lanzarNotas(n) {
+  const notas = ['♩','♪','♫','♬'];
+  for (let i = 0; i < n; i++) {
+    setTimeout(() => {
+      const el = document.createElement('div');
+      el.className = 'nota';
+      el.textContent = notas[Math.floor(Math.random()*notas.length)];
+      el.style.left = (20 + Math.random() * 60) + 'vw';
+      el.style.bottom = '20vh';
+      el.style.color = COLORES[Math.floor(Math.random()*COLORES.length)];
+      el.style.animationDuration = (2 + Math.random()) + 's';
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 3500);
+    }, i * 120);
+  }
+}
+
+function lanzarConfeti() {
+  for (let i = 0; i < 60; i++) {
+    setTimeout(() => {
+      const el = document.createElement('div');
+      el.className = 'confeti';
+      el.style.left = (Math.random() * 100) + 'vw';
+      el.style.top = '-10px';
+      el.style.background = COLORES[Math.floor(Math.random()*COLORES.length)];
+      el.style.animationDuration = (1.5 + Math.random() * 1.5) + 's';
+      el.style.animationDelay = (Math.random() * 0.8) + 's';
+      el.style.transform = `rotate(${Math.random()*360}deg)`;
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 4000);
+    }, i * 30);
+  }
+}
+
+mostrarInicio();
+</script>
+</body>
+</html>
