@@ -454,12 +454,11 @@ function iniciar() {
   turnos=[];
   // nivel = decimales mostrados (1..6); rondas por nivel
   // Nivel 1: 1 decimal → responde entero          (2 rondas)
-  // Nivel 2: 2 decimales → responde a 1 dec       (2 rondas)
-  // Nivel 3: 3 decimales → responde a 2 dec       (2 rondas)
+  // Nivel 2: 2 decimales → responde a 1 dec       (3 rondas)
+  // Nivel 3: 3 decimales → responde a 2 dec       (3 rondas)
   // Nivel 4: 4 decimales → responde a 3 dec       (2 rondas)
-  // Nivel 5: 5 decimales → responde a 4 dec       (2 rondas)
-  // Nivel 6: 6 decimales → responde a 5 dec       (1 ronda)
-  [[1,2],[2,2],[3,2],[4,2],[5,2],[6,1]].forEach(([niv,rondas])=>{
+  // Nivel 5: 5 decimales → responde a 4 dec       (1 ronda)
+  [[1,2],[2,3],[3,3],[4,2],[5,1]].forEach(([niv,rondas])=>{
     for (let r=0;r<rondas;r++)
       for (let j=0;j<numJugadores;j++)
         turnos.push({jugador:j, nivel:niv, num:generarNumero(niv)});
@@ -486,7 +485,7 @@ function mostrarTurno() {
   if (turnoIdx>=turnos.length){mostrarFinal();return;}
   valorActual='';
   const t=turnos[turnoIdx];
-  const descs=['','Al entero','A 1 decimal','A 2 decimales','A 3 decimales','A 4 decimales','A 5 decimales'];
+  const descs=['','Al entero','A 1 decimal','A 2 decimales','A 3 decimales','A 4 decimales'];
   const desc=descs[t.nivel];
   const correc=aproximar(t.num, t.nivel);
   const pct=Math.round(turnoIdx/turnos.length*100);
